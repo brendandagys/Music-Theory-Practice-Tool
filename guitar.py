@@ -61,31 +61,38 @@ Practice Menu
             #     print("\n{0} is not a valid choice.".format(choice))
 
 class Note:
-    def __init__(self, type):
+    def __init__(self, type, ext_indicator = None, long = None):
+
+        extension = ''
+        if long:
+            extension+='l'
+        if ext_indicator:
+            extension+='h'
+
         if type == 'A':
-            self.path = pwd + '/A.wav'
+            self.path = pwd + '/' + extension + 'A.wav'
         if type == 'A#/Bb':
-            self.path = pwd + '/A#:Bb.wav'
+            self.path = pwd + '/' + extension + 'A#:Bb.wav'
         if type == 'B':
-            self.path = pwd + '/B.wav'
+            self.path = pwd + '/' + extension + 'B.wav'
         if type == 'C':
-            self.path = pwd + '/C.wav'
+            self.path = pwd + '/' + extension + 'C.wav'
         if type == 'C#/Db':
-            self.path = pwd + '/C#:Db.wav'
+            self.path = pwd + '/' + extension + 'C#:Db.wav'
         if type == 'D':
-            self.path = pwd + '/D.wav'
+            self.path = pwd + '/' + extension + 'D.wav'
         if type == 'D#/Eb':
-            self.path = pwd + '/D#:Eb.wav'
+            self.path = pwd + '/' + extension + 'D#:Eb.wav'
         if type == 'E':
-            self.path = pwd + '/E.wav'
+            self.path = pwd + '/' + extension + 'E.wav'
         if type == 'F':
-            self.path = pwd + '/F.wav'
+            self.path = pwd + '/' + extension + 'F.wav'
         if type == 'F#/Gb':
-            self.path = pwd + '/F#:Gb.wav'
+            self.path = pwd + '/' + extension + 'F#:Gb.wav'
         if type == 'G':
-            self.path = pwd + '/G.wav'
+            self.path = pwd + '/' + extension + 'G.wav'
         if type == 'G#/Ab':
-            self.path = pwd + '/G#:Ab.wav'
+            self.path = pwd + '/' + extension + 'G#:Ab.wav'
 
         self.type = type
 
@@ -94,29 +101,37 @@ class Player:
     def play(self, notes_list):
         note_count = 3
         note_1 = Note(notes_list[0])
+        note_1_long = Note(notes_list[0], long=1)
         note_2 = Note(notes_list[1])
+        note_2_long = Note(notes_list[1], long=1)
         note_3 = Note(notes_list[2])
+        note_3_long = Note(notes_list[2], long=1)
         try:
             note_4 = Note(notes_list[3])
+            note_4_long = Note(notes_list[3], long=1)
             note_count+=1
         except:
             pass
         try:
-            note_5 = Note(notes_list[4])
+            note_5 = Note(notes_list[4], ext_indicator=1)
+            note_5_long = Note(notes_list[4], ext_indicator=1, long=1)
             note_count+=1
         except:
             pass
         try:
-            note_6 = Note(notes_list[5])
+            note_6 = Note(notes_list[5], ext_indicator=1)
+            note_6_long = Note(notes_list[5], ext_indicator=1, long=1)
             note_count+=1
         except:
             pass
         try:
-            note_7 = Note(notes_list[6])
+            note_7 = Note(notes_list[6], ext_indicator=1)
+            note_7_long = Note(notes_list[6], ext_indicator=1, long=1)
             note_count+=1
         except:
             pass
 
+        # REMOVE THIS
         print(note_count)
 
         audio1 = AudioSegment.from_wav(note_1.path)
@@ -131,16 +146,29 @@ class Player:
         if note_count > 6:
             audio7 = AudioSegment.from_wav(note_7.path)
 
-        mixed1 = audio1.overlay(audio2)          #combine , superimpose audio files
-        mixed2 = mixed1.overlay(audio3)          #Further combine , superimpose audio files
+        # For the chords
+        audio1_long = AudioSegment.from_wav(note_1_long.path)
+        audio2_long = AudioSegment.from_wav(note_2_long.path)
+        audio3_long = AudioSegment.from_wav(note_3_long.path)
         if note_count > 3:
-            mixed3 = mixed2.overlay(audio4)
+            audio4_long = AudioSegment.from_wav(note_4_long.path)
         if note_count > 4:
-            mixed4 = mixed3.overlay(audio5)
+            audio5_long = AudioSegment.from_wav(note_5_long.path)
         if note_count > 5:
-            mixed5 = mixed4.overlay(audio6)
+            audio6_long = AudioSegment.from_wav(note_6_long.path)
         if note_count > 6:
-            mixed6 = mixed5.overlay(audio7)
+            audio7_long = AudioSegment.from_wav(note_7_long.path)
+
+        mixed1 = audio1_long.overlay(audio2_long)          #combine , superimpose audio files
+        mixed2 = mixed1.overlay(audio3_long)          #Further combine , superimpose audio files
+        if note_count > 3:
+            mixed3 = mixed2.overlay(audio4_long)
+        if note_count > 4:
+            mixed4 = mixed3.overlay(audio5_long)
+        if note_count > 5:
+            mixed5 = mixed4.overlay(audio6_long)
+        if note_count > 6:
+            mixed6 = mixed5.overlay(audio7_long)
 
         play(audio1)
         play(audio2)
@@ -220,7 +248,7 @@ class GetNotesChord:
 
     chord_structures = {'Maj':[0,4,7], 'min':[0,3,7], 'aug':[0,4,8], 'Maj7':[0,4,7,11], 'Maj7(#5)':[0,4,8,11],
                         '7':[0,4,7,10], '7(b5)':[0,4,6,10], '7(#5)':[0,4,8,10], 'min7':[0,3,7,10], 'min7(b5)':[0,3,6,10],
-                        'min/Maj7':[0,3,7,11], 'Maj9':[0,4,7,11,2], '9':[0,4,7,10,2], 'min9':[0,3,7,10,1], 'Maj6':[0,4,7,9],
+                        'min/Maj7':[0,3,7,11], 'Maj9':[0,4,7,11,2], '9':[0,4,7,10,2], 'min9':[0,3,7,10,2], 'Maj6':[0,4,7,9],
                         'min6':[0,3,7,9], '7(#9)':[0,4,7,10,3], '7(b9)':[0,4,7,10,2], 'sus(b9)':[0,5,7,10,1],
                         '7sus4':[0,5,7,10], '13':[0,4,7,10,9], 'dim':[0,3,6,9]}
 
@@ -238,7 +266,8 @@ class GetNotesChord:
                         'G#/Ab': ['G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G']
                         }
 
-    notes = ['a', 'a#', 'bb', 'b', 'c', 'c#', 'db', 'd', 'd#', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'g#', 'ab']
+    notes = ['a', 'a#', 'bb', 'b', 'c', 'c#', 'db', 'd', 'd#', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'g#', 'ab', 'a#/bb',
+             'c#/db', 'd#/eb', 'f#/gb', 'g#/ab']
 
     def prompt(self):
         print('''
@@ -257,12 +286,43 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
 
     def notes_in_chord(self):
 
+        got_root = 0
         chord = input('\nPlease enter the root or the full chord: ')
+
         if ((len(chord) == 1) and (chord.lower() in self.notes)):
             root = chord.upper()
+            got_root = 1
+
+        elif ((chord[1].lower() == 'b') and (len(chord) > 1) and (len(chord) < 6)):
+            if chord[0].lower() == 'a':
+                root = 'G#/Ab'
+            elif chord[0].lower() == 'b':
+                root = 'A#/Bb'
+            elif chord[0].lower() == 'd':
+                root = 'C#/Db'
+            elif chord[0].lower() == 'e':
+                root = 'D#/Eb'
+            elif chord[0].lower() == 'g':
+                root = 'F#/Gb'
+            got_root = 1
+
+        elif ((chord[1].lower() == '#') and (len(chord) > 1) and (len(chord) < 6)):
+            if chord[0].lower() == 'g':
+                root = 'G#/Ab'
+            elif chord[0].lower() == 'a':
+                root = 'A#/Bb'
+            elif chord[0].lower() == 'c':
+                root = 'C#/Db'
+            elif chord[0].lower() == 'd':
+                root = 'D#/Eb'
+            elif chord[0].lower() == 'f':
+                root = 'F#/Gb'
+            got_root = 1
+
+        if got_root == 1:
             chord_type = input('\nPlease specify the type of chord: ')
             full_chord = root + chord_type
-            if (chord_type in self.chord_list):
+            if ((chord_type in self.chord_list) or (chord_type.lower() in self.chord_list)):
                 structure = self.chord_structures[chord_type]
 
                 notes_list = []
@@ -284,7 +344,7 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
             root = chord[0].upper()
             chord_type = chord[1:]
             full_chord = root + chord_type
-            if (chord_type in self.chord_list):
+            if ((chord_type in self.chord_list) or (chord_type.lower() in self.chord_list)):
                 structure = self.chord_structures[chord_type]
 
                 notes_list = []
@@ -306,13 +366,12 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
             self.notes_in_chord()
 
 
-
-    def get_notes_chord():
-        for iteration in range(1000):
-            type, notes = notes_of_chord()
-            chord = Chord(type, notes)
-            chord.print_type()
-            chord.print_notes()
+    # def get_notes_chord():
+    #     for iteration in range(1000):
+    #         type, notes = notes_of_chord()
+    #         chord = Chord(type, notes)
+    #         chord.print_type()
+    #         chord.print_notes()
 
 
 class RandomChord:
