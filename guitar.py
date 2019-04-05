@@ -7,8 +7,6 @@ from pydub import AudioSegment
 from pydub.playback import play
 import ffmpeg
 
-# ffmpeg -nostats -loglevel 0
-
 import os
 pwd = os.getcwd()
 
@@ -19,29 +17,21 @@ class Menu:
 
         self.choices = {"1": choice_1,
                         "2": 'get_notes_scale',
-                        "3": 'play_scale',
-                        "4": 'play_chord',
-                        "5": 'play_arpeggio',
-                        "6": 'play_note',
-                        "7": 'interval_practice',
-                        "8": 'random_scale',
-                        "9": choice_9
+                        "3": 'interval_practice',
+                        "4": choice_4,
+                        "5": choice_5
                         }
 
     def display_menu(self):
         print("""
 Practice Menu
 
-1) Get notes of a chord
-2) Get notes of a scale
-3) Play a scale
-4) Play a chord
-5) Play an arpeggio
-6) Play a note
-7) Interval practice
-8) Generate random scales
-9) Generate random chords
-10) QUIT
+1) Look up/play a chord
+2) Look up/play a scale
+3) Interval practice
+4) Generate random scales
+5) Generate random chords
+6) QUIT
 """)
 
     def run(self):
@@ -51,8 +41,10 @@ Practice Menu
             choice = str(input("Enter an option: "))
             if choice == '1':
                 choice_1.run()
-            if choice == '9':
-                choice_9.run()
+            if choice == '4':
+                choice_4.run()
+            if choice == '5':
+                choice_5.run()
 
             # action = self.choices.get(choice)
             # if action:
@@ -61,72 +53,32 @@ Practice Menu
             #     print("\n{0} is not a valid choice.".format(choice))
 
 class Note:
-    def __init__(self, type, ext_indicator = None, long = None):
-
-        extension = ''
-        if long:
-            extension+='l'
-        if ext_indicator:
-            extension+='h'
-
-        if type == 'A':
-            self.path = pwd + '/' + extension + 'A.wav'
-        if type == 'A#/Bb':
-            self.path = pwd + '/' + extension + 'A#:Bb.wav'
-        if type == 'B':
-            self.path = pwd + '/' + extension + 'B.wav'
-        if type == 'C':
-            self.path = pwd + '/' + extension + 'C.wav'
-        if type == 'C#/Db':
-            self.path = pwd + '/' + extension + 'C#:Db.wav'
-        if type == 'D':
-            self.path = pwd + '/' + extension + 'D.wav'
-        if type == 'D#/Eb':
-            self.path = pwd + '/' + extension + 'D#:Eb.wav'
-        if type == 'E':
-            self.path = pwd + '/' + extension + 'E.wav'
-        if type == 'F':
-            self.path = pwd + '/' + extension + 'F.wav'
-        if type == 'F#/Gb':
-            self.path = pwd + '/' + extension + 'F#:Gb.wav'
-        if type == 'G':
-            self.path = pwd + '/' + extension + 'G.wav'
-        if type == 'G#/Ab':
-            self.path = pwd + '/' + extension + 'G#:Ab.wav'
-
-        self.type = type
-
+    def __init__(self, type, prefix = ''):
+        self.path = pwd + '/' + prefix + str(type) + '.wav'
 
 class Player:
     def play(self, notes_list):
         note_count = 3
-        note_1 = Note(notes_list[0])
-        note_1_long = Note(notes_list[0], long=1)
-        note_2 = Note(notes_list[1])
-        note_2_long = Note(notes_list[1], long=1)
-        note_3 = Note(notes_list[2])
-        note_3_long = Note(notes_list[2], long=1)
+        note_1 = Note(notes_list[0]); note_1_long = Note(notes_list[0], 'l')
+        note_2 = Note(notes_list[1]); note_2_long = Note(notes_list[1], 'l')
+        note_3 = Note(notes_list[2]); note_3_long = Note(notes_list[2], 'l')
         try:
-            note_4 = Note(notes_list[3])
-            note_4_long = Note(notes_list[3], long=1)
+            note_4 = Note(notes_list[3]); note_4_long = Note(notes_list[3], 'l')
             note_count+=1
         except:
             pass
         try:
-            note_5 = Note(notes_list[4], ext_indicator=1)
-            note_5_long = Note(notes_list[4], ext_indicator=1, long=1)
+            note_5 = Note(notes_list[4]); note_5_long = Note(notes_list[4], 'l')
             note_count+=1
         except:
             pass
         try:
-            note_6 = Note(notes_list[5], ext_indicator=1)
-            note_6_long = Note(notes_list[5], ext_indicator=1, long=1)
+            note_6 = Note(notes_list[5]); note_6_long = Note(notes_list[5], 'l')
             note_count+=1
         except:
             pass
         try:
-            note_7 = Note(notes_list[6], ext_indicator=1)
-            note_7_long = Note(notes_list[6], ext_indicator=1, long=1)
+            note_7 = Note(notes_list[6]); note_7_long = Note(notes_list[6], 'l')
             note_count+=1
         except:
             pass
@@ -252,22 +204,38 @@ class GetNotesChord:
                         'min6':[0,3,7,9], '7(#9)':[0,4,7,10,3], '7(b9)':[0,4,7,10,2], 'sus(b9)':[0,5,7,10,1],
                         '7sus4':[0,5,7,10], '13':[0,4,7,10,9], 'dim':[0,3,6,9]}
 
+    chord_additions =  {'Maj':[4,7], 'min':[3,7], 'aug':[4,8], 'Maj7':[4,7,11], 'Maj7(#5)':[4,8,11],
+                        '7':[4,7,10], '7(b5)':[4,6,10], '7(#5)':[4,8,10], 'min7':[3,7,10], 'min7(b5)':[3,6,10],
+                        'min/Maj7':[3,7,11], 'Maj9':[4,7,11,14], '9':[4,7,10,14], 'min9':[3,7,10,14], 'Maj6':[4,7,9],
+                        'min6':[3,7,9], '7(#9)':[4,7,10,15], '7(b9)':[4,7,10,14], 'sus(b9)':[5,7,10,13],
+                        '7sus4':[5,7,10], '13':[4,7,10,21], 'dim':[3,6,9]}
+
     chromatic_scales = {'A':     ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'],
-                        'A#/Bb': ['A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A'],
+                        'A#':    ['A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A'],
+                        'Bb':    ['A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A'],
                         'B':     ['B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb'],
                         'C':     ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'],
-                        'C#/Db': ['C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C'],
+                        'C#':    ['C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C'],
+                        'Db':    ['C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C'],
                         'D':     ['D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db'],
-                        'D#/Eb': ['D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D'],
+                        'D#':    ['D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D'],
+                        'Eb':    ['D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D'],
                         'E':     ['E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb'],
                         'F':     ['F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E'],
-                        'F#/Gb': ['F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F'],
+                        'F#':    ['F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F'],
+                        'Gb':    ['F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F'],
                         'G':     ['G', 'G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb'],
-                        'G#/Ab': ['G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G']
+                        'G#':    ['G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G'],
+                        'Ab':    ['G#/Ab', 'A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G']
                         }
 
     notes = ['a', 'a#', 'bb', 'b', 'c', 'c#', 'db', 'd', 'd#', 'eb', 'e', 'f', 'f#', 'gb', 'g', 'g#', 'ab', 'a#/bb',
              'c#/db', 'd#/eb', 'f#/gb', 'g#/ab']
+
+    notes_lookup = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+
+    notes_dict = {'a':1, 'a#':2, 'bb':2, 'b':3, 'c':4, 'c#':5, 'db':5, 'd':6, 'd#':7, 'eb':7, 'e':8, 'f':9, 'f#':10,
+                  'gb':10, 'g':11, 'g#':12, 'ab':12, 'a#/bb':2, 'c#/db':5, 'd#/eb':7, 'f#/gb':10, 'g#/ab':12}
 
     def prompt(self):
         print('''
@@ -290,45 +258,32 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
         chord = input('\nPlease enter the root or the full chord: ')
 
         if ((len(chord) == 1) and (chord.lower() in self.notes)):
-            root = chord.upper()
+            text_root = chord.upper()
+            root = self.notes_dict[chord[0].lower()]
             got_root = 1
 
-        elif ((chord[1].lower() == 'b') and (len(chord) > 1) and (len(chord) < 6)):
-            if chord[0].lower() == 'a':
-                root = 'G#/Ab'
-            elif chord[0].lower() == 'b':
-                root = 'A#/Bb'
-            elif chord[0].lower() == 'd':
-                root = 'C#/Db'
-            elif chord[0].lower() == 'e':
-                root = 'D#/Eb'
-            elif chord[0].lower() == 'g':
-                root = 'F#/Gb'
-            got_root = 1
-
-        elif ((chord[1].lower() == '#') and (len(chord) > 1) and (len(chord) < 6)):
-            if chord[0].lower() == 'g':
-                root = 'G#/Ab'
-            elif chord[0].lower() == 'a':
-                root = 'A#/Bb'
-            elif chord[0].lower() == 'c':
-                root = 'C#/Db'
-            elif chord[0].lower() == 'd':
-                root = 'D#/Eb'
-            elif chord[0].lower() == 'f':
-                root = 'F#/Gb'
+        elif (((chord[1].lower() == 'b') or chord[1] == '#') and (len(chord) > 1) and (len(chord) < 6)):
+            text_root = chord[0:2]
+            root = self.notes_dict[chord[0:2].lower()]
             got_root = 1
 
         if got_root == 1:
             chord_type = input('\nPlease specify the type of chord: ')
-            full_chord = root + chord_type
-            if ((chord_type in self.chord_list) or (chord_type.lower() in self.chord_list)):
-                structure = self.chord_structures[chord_type]
+            full_chord = text_root + chord_type
+            if (chord_type in self.chord_list):
+                chord_structure = self.chord_structures[chord_type]
+                chord_addition = self.chord_additions[chord_type]
 
-                notes_list = []
-                for degree in structure:
-                    notes_list.append(self.chromatic_scales[root][degree])
-                print('\nThe notes in ' + full_chord + ' are: ' + str(notes_list) + '\n')
+                notes_list = [root]
+                for number in chord_addition:
+                    notes_list.append(notes_list[0] + number)
+
+                text_notes_list = []
+                for degree in chord_structure:
+                    text_notes_list.append(self.chromatic_scales[text_root][degree])
+                print('\nThe notes in ' + full_chord + ' are: ' + str(text_notes_list) + '\n')
+
+                print(notes_list)
 
                 ask_to_play = input('Press \'p\' to hear the chord. Press any other key to try another chord: ')
                 if ask_to_play.lower() == 'p':
@@ -340,23 +295,23 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
                 print('\nPLEASE USE A VALID CHORD TYPE.')
 
 
-        elif ((len(chord) > 1) and (chord[0].lower() in self.notes)):
-            root = chord[0].upper()
-            chord_type = chord[1:]
-            full_chord = root + chord_type
-            if ((chord_type in self.chord_list) or (chord_type.lower() in self.chord_list)):
-                structure = self.chord_structures[chord_type]
-
-                notes_list = []
-                for degree in structure:
-                    notes_list.append(self.chromatic_scales[root][degree])
-                print('\nThe notes in ' + full_chord + ' are: ' + str(notes_list) + '\n')
-
-                ask_to_play = input('Press \'p\' to hear the chord. Press any other key to try another chord: ')
-                if ask_to_play.lower() == 'p':
-                    player.play(notes_list)
-
-                self.notes_in_chord()
+        # elif ((len(chord) > 1) and (chord[0].lower() in self.notes)):
+        #     root = chord[0].upper()
+        #     chord_type = chord[1:]
+        #     full_chord = root + chord_type
+        #     if ((chord_type in self.chord_list) or (chord_type.lower() in self.chord_list)):
+        #         structure = self.chord_structures[chord_type]
+        #
+        #         notes_list = []
+        #         for degree in structure:
+        #             notes_list.append(self.chromatic_scales[root][degree])
+        #         print('\nThe notes in ' + full_chord + ' are: ' + str(notes_list) + '\n')
+        #
+        #         ask_to_play = input('Press \'p\' to hear the chord. Press any other key to try another chord: ')
+        #         if ask_to_play.lower() == 'p':
+        #             player.play(notes_list)
+        #
+        #         self.notes_in_chord()
 
         elif chord[0].lower() == 'q':
             Menu().run()
@@ -373,6 +328,47 @@ Maj6, min6, 7(#9), 7(b9), sus(b9), 7sus4, 13, dim
     #         chord.print_type()
     #         chord.print_notes()
 
+class RandomScale:
+
+    notes = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab']
+
+    scales = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian',
+              'Melodic Minor', 'Phrygian N6', 'Lydian Augmented', 'Lydian Dominant',
+              'Mixolydian b6', 'Locrian #2', 'Altered', 'Harmonic Minor', 'Locrian 6',
+              'Ionian #5', 'Dorian #4', 'Phrygian Dominant', 'Lydian #2', 'Super Locrian bb7',
+              'Major Pentatonic', 'Minor Pentatonic', 'Major Blues', 'Minor Blues']
+
+    def run(self):
+
+        display_count = int(input('\nPlease enter the number of scales you\'d like displayed: '))
+        time_delay = int(input('\nPlease enter the delay in seconds between each scale: '))
+
+        temporary = []
+
+        if (display_count > 0 and time_delay > 0):
+
+            for count in range(0, display_count):
+                note = random.randint(0, 11)
+                scale = random.randint(0, 24)
+
+                if scale in temporary:
+                    count = count - 1
+                    continue
+                else:
+                    temporary.append(scale)
+
+                if len(temporary) == 21:
+                    temporary = []
+                    # print ('\n--------------------------------------------------------------------------------')
+
+                print ('\n' + self.notes[note] + ' ' + self.scales[scale])
+
+                time.sleep(time_delay)
+
+        else:
+            print('\nPLEASE ENSURE NUMBERS ARE GREATER THAN 0.')
+
+
 
 class RandomChord:
 
@@ -383,12 +379,12 @@ class RandomChord:
 
     def run(self):
 
-        display_count = input('\nPlease enter the number of chords you\'d like displayed: ')
-        time_delay = input('\nPlease enter the delay between each chord: ')
+        display_count = int(input('\nPlease enter the number of chords you\'d like displayed: '))
+        time_delay = int(input('\nPlease enter the delay between each chord: '))
 
         temporary = []
 
-        if ((display_count > 0) and (time_delay > 0)):
+        if (display_count > 0 and time_delay > 0):
 
             for count in range(0, display_count):
                 note = random.randint(0, 11)
@@ -413,9 +409,9 @@ class RandomChord:
 
         # Menu().Run()
 
-# if __name__ == "__main__":
-
-choice_1 = GetNotesChord()
-choice_9 = RandomChord()
-player = Player()
-Menu().run()
+if __name__ == "__main__":
+    choice_1 = GetNotesChord()
+    choice_4 = RandomScale()
+    choice_5 = RandomChord()
+    player = Player()
+    Menu().run()
