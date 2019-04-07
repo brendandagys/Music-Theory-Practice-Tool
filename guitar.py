@@ -1,18 +1,11 @@
-# SUPPRESS OUTPUT AND FIX FULL CHORD + FULL SCALE ENTRY???: 'SOME ERROR'
-
 import sys
-import datetime
-import random
-import time
 from random import randint
+import time
 from pydub import AudioSegment
-from pydub.playback import play
-import ffmpeg
+import subprocess
 
 import os
 pwd = os.getcwd()
-
-
 
 def get_count(type):
     display_count = input('\nPlease enter the number of ' + type + 's' + ' you\'d like displayed: ')
@@ -121,61 +114,49 @@ class Player:
         except:
             pass
 
-        # Set up the AudioSegment objects (short and long)
-        audio1 = AudioSegment.from_wav(note_1.path); audio1_long = AudioSegment.from_wav(note_1_long.path)
-        audio2 = AudioSegment.from_wav(note_2.path); audio2_long = AudioSegment.from_wav(note_2_long.path)
-        audio3 = AudioSegment.from_wav(note_3.path); audio3_long = AudioSegment.from_wav(note_3_long.path)
+        # Set up the AudioSegment objects to be mixed (long)
+        audio1_long = AudioSegment.from_wav(note_1_long.path)
+        audio2_long = AudioSegment.from_wav(note_2_long.path)
+        audio3_long = AudioSegment.from_wav(note_3_long.path)
 
         mixed1 = audio1_long.overlay(audio2_long)
-        mixed2 = mixed1.overlay(audio3_long)
+        mixed2 = mixed1.overlay(audio3_long); mixed2.export(pwd + '/audio_files/to_play.wav', format='wav')
 
         if note_count > 3:
-            audio4 = AudioSegment.from_wav(note_4.path); audio4_long = AudioSegment.from_wav(note_4_long.path)
-            mixed3 = mixed2.overlay(audio4_long)
+            audio4_long = AudioSegment.from_wav(note_4_long.path)
+            mixed3 = mixed2.overlay(audio4_long); mixed3.export(pwd + '/audio_files/to_play.wav', format='wav')
         if note_count > 4:
-            audio5 = AudioSegment.from_wav(note_5.path); audio5_long = AudioSegment.from_wav(note_5_long.path)
-            mixed4 = mixed3.overlay(audio5_long)
+            audio5_long = AudioSegment.from_wav(note_5_long.path)
+            mixed4 = mixed3.overlay(audio5_long); mixed4.export(pwd + '/audio_files/to_play.wav', format='wav')
         if note_count > 5:
-            audio6 = AudioSegment.from_wav(note_6.path); audio6_long = AudioSegment.from_wav(note_6_long.path)
-            mixed5 = mixed4.overlay(audio6_long)
+            audio6_long = AudioSegment.from_wav(note_6_long.path)
+            mixed5 = mixed4.overlay(audio6_long); mixed5.export(pwd + '/audio_files/to_play.wav', format='wav')
         if note_count > 6:
-            audio7 = AudioSegment.from_wav(note_7.path); audio7_long = AudioSegment.from_wav(note_7_long.path)
-            mixed6 = mixed5.overlay(audio7_long)
+            audio7_long = AudioSegment.from_wav(note_7_long.path)
+            mixed6 = mixed5.overlay(audio7_long); mixed6.export(pwd + '/audio_files/to_play.wav', format='wav')
         if note_count > 7:
-            audio8 = AudioSegment.from_wav(note_8.path); audio7_long = AudioSegment.from_wav(note_8_long.path)
+            audio7_long = AudioSegment.from_wav(note_8_long.path)
 
-        print()
-
-        # sys.stdout = open(os.devnull, "w")
         # PLAY!
-        play(audio1); play(audio2); play(audio3)
+        subprocess.call(['afplay', note_1.path])
+        subprocess.call(['afplay', note_2.path])
+        subprocess.call(['afplay', note_3.path])
         if note_count > 3:
-            play(audio4)
+            subprocess.call(['afplay', note_4.path])
         if note_count > 4:
-            play(audio5)
+            subprocess.call(['afplay', note_5.path])
         if note_count > 5:
-            play(audio6)
+            subprocess.call(['afplay', note_6.path])
         if note_count > 6:
-            play(audio7)
+            subprocess.call(['afplay', note_7.path])
         if note_count > 7:
-            play(audio8)
+            subprocess.call(['afplay', note_8.path])
 
         time.sleep(0.5)
 
         if chord == True:
             # PLAY CHORD!
-            if note_count == 4:
-                play(mixed3)
-            elif note_count == 5:
-                play(mixed4)
-            elif note_count == 6:
-                play(mixed5)
-            elif note_count == 7:
-                play(mixed6)
-            else:
-                play(mixed2)
-        # sys.stdout = sys.__stdout__
-        print()
+            subprocess.call(['afplay', pwd + '/audio_files/to_play.wav'])
 
 
 class GetNotesScale:
@@ -472,6 +453,7 @@ class RandomInterval:
                     time.sleep(desired_delay)
 
         Menu.run()
+
 
 class RandomScale:
 
